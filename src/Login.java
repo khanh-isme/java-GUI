@@ -1,15 +1,12 @@
-import Student.*;
-import project.*;
-import project.Ssystem;
-import project.User;
-
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class Login extends JFrame {
-    public Login(Ssystem ssystem , Bank bank){
+    public Login( Ssystem system){
         setTitle("Login Form");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 300);
@@ -80,27 +77,19 @@ public class Login extends JFrame {
         add(panel);
 
 
-        loginButton.addActionListener(e -> {
-            String username = userText.getText();
-            String password = new String(passText.getPassword());
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username= userText.getText();
+                String password= new String (passText.getPassword());
+                if( system.loginUser(username,password)!= null){
 
-            // Gọi phương thức đăng nhập
-            User user = ssystem.loginUser(username, password);
+                }else{
+
+                }
 
 
-            if (user instanceof Student student1) {
-                System.out.println("1");
-                // Nếu là sinh viên, mở giao diện project.Student.ShowQuizPanel
-                this.dispose();
-                SwingUtilities.invokeLater(() -> new StudentGUI(student1, bank));
-            } else {
-                // Hiển thị thông báo lỗi nếu đăng nhập thất bại
-                JOptionPane.showMessageDialog(null,
-                        "Tên đăng nhập hoặc mật khẩu không chính xác!",
-                        "Lỗi đăng nhập",
-                        JOptionPane.ERROR_MESSAGE);
             }
         });
-
     }
 }
