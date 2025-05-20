@@ -1,6 +1,8 @@
 package DAO;
 
 import project.*;
+
+import javax.swing.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -8,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Date;
+
 
 
 
@@ -96,7 +99,7 @@ public class StudentDAO {
     }
 
     public static boolean updateStudent(Student student) {
-        String sql = "UPDATE Student SET name = ?, pass = ?, ngaysinh = ?, lop = ? WHERE mssv = ?";
+        String sql = "UPDATE Students SET name = ?, pass = ?, ngaysinh = ?, lop = ? WHERE mssv = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -121,6 +124,59 @@ public class StudentDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static int getLastStudentIdFromDB() {
+        String sql = "SELECT mssv FROM students ORDER BY mssv DESC LIMIT 1";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt("mssv");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Đã xảy ra lỗi khi truy cập dữ liệu:\n" + e.getMessage(),
+                    "Lỗi Hệ Thống",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+        return -1;
+    }
+
+
+    public static boolean saveStudentToDB(Student student) {
+        String sql = "INSERT INTO students (mssv, name, pass, ngaysinh, lop) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, student.getMssv());
+            stmt.setString(2, student.getUsername());
+            stmt.setString(3, student.getPassword());
+
+            LocalDate ld = LocalDate.parse(student.getNgaySinh());
+            stmt.setDate(4, java.sql.Date.valueOf(ld));
+
+
+            stmt.setString(5, student.getLop());
+
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Đã xảy ra lỗi khi lưu sinh viên:\n" + e.getMessage(),
+                    "Lỗi Hệ Thống",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+
+        return false;
     }
 
 

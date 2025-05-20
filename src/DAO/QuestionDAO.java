@@ -3,6 +3,8 @@ package DAO;
 import project.*;
 import javax.swing.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QuestionDAO {
     public static int getLastQuestionIdFromDb(){
@@ -140,5 +142,39 @@ public class QuestionDAO {
         }
         return updated;
     }
+
+
+    public static List<Question> getQuestionsByQuizId(int quizId) {
+        List<Question> questions = new ArrayList<>();
+
+        String sql = "SELECT questionId, questionText, answerA, answerB, answerC, answerD, correctAnswer " +
+                "FROM questions WHERE quizId = ?";
+
+        try (Connection conn = DBConnection.getConnection();  // Đảm bảo bạn có lớp Database cung cấp kết nối
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, quizId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int questionId = rs.getInt("questionId");
+                String questionText = rs.getString("questionText");
+                String answerA = rs.getString("answerA");
+                String answerB = rs.getString("answerB");
+                String answerC = rs.getString("answerC");
+                String answerD = rs.getString("answerD");
+                String correctAnswer = rs.getString("correctAnswer");
+
+                Question q = new Question(questionId, quizId, questionText, answerA, answerB, answerC, answerD, correctAnswer);
+                questions.add(q);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi truy vấn câu hỏi:\n" + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return questions;
+    }
+
 
 }

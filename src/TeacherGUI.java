@@ -52,7 +52,7 @@ public class TeacherGUI {
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBackground(new Color(54, 57, 63));
-        sidebar.setPreferredSize(new Dimension(260, frame.getHeight()));
+        sidebar.setPreferredSize(new Dimension(230, frame.getHeight()));
         sidebar.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
 
         JLabel title = new JLabel("TEACHER MENU", SwingConstants.CENTER);

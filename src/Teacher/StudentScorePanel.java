@@ -169,4 +169,8 @@ public class StudentScorePanel extends JPanel {
         yeuLabel.setText(String.format("Số lượng kết quả Yếu (< 5.0): %d", yeuCount));
         totalLabel.setText(String.format("Tổng số kết quả hiển thị: %d", totalCount));
     }
+
+
+
+
 }

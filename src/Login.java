@@ -4,6 +4,8 @@ import project.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -110,8 +112,36 @@ public class Login extends JFrame {
         });
 
 
+        JButton registerButton = new JButton("Đăng ký");
+        registerButton.setBounds(150, 220, 180, 30);
+        registerButton.setBackground(new Color(39, 174, 96));
+        registerButton.setForeground(Color.WHITE);
+        registerButton.setFont(new Font("Arial", Font.BOLD, 14));
+        registerButton.setBorder(BorderFactory.createEmptyBorder());
+        registerButton.setFocusPainted(false);
 
+        registerButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                registerButton.setBackground(new Color(46, 204, 113));
+            }
 
+            @Override
+            public void mouseExited(MouseEvent e) {
+                registerButton.setBackground(new Color(39, 174, 96));
+            }
+        });
+
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Mở form đăng ký
+                new RegisterFrame(ssystem);  // 👉 Bạn cần tạo class này
+            }
+        });
+
+        panel.add(registerButton);
+        add(panel);
 
     }
 }

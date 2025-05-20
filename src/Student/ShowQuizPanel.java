@@ -33,8 +33,8 @@ public class ShowQuizPanel extends JPanel {
         // Tạo nút cho từng môn học
         for (Subject subject : subjects) {
             JButton button = new JButton(subject.getName() +"  " + subject.getNgayThi());
-            button.setBackground(Color.WHITE); // Màu nền trắng
-            button.setForeground(Color.BLACK); // Chữ màu đen cho dễ đọc
+            button.setBackground(Color.WHITE);
+            button.setForeground(Color.BLACK);
             button.setFont(new Font("Segoe UI", Font.BOLD, 16));
             button.setPreferredSize(new Dimension(200, 60)); // Kích thước cố định
             button.setBorder(BorderFactory.createLineBorder(new Color(150, 150, 150), 2)); // Viền xám

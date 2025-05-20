@@ -1,45 +1,67 @@
 package BUS;
 import project.*;
+import DAO.*;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.time.LocalDate;
+import javax.swing.JOptionPane;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class StudentValidator {
 
-    public static Student validateStudent(String mssvStr, String username, String password, String ngaySinhStr, String lop) throws IllegalArgumentException {
-        int mssv;
 
-        // Kiểm tra mssv
-        try {
-            mssv = Integer.parseInt(mssvStr);
-            if (mssv <= 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Mã số sinh viên phải là số nguyên dương.");
+
+    public static Student validateStudent(int mssv,String username, String password, String ngaySinhStr, String lop) {
+        if(mssv ==0){
+            mssv = StudentDAO.getLastStudentIdFromDB() + 1;
         }
+
 
         // Kiểm tra username
         if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Tên sinh viên không được để trống.");
+            JOptionPane.showMessageDialog(null, "Tên sinh viên không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+
+        // Không cho phép tên chứa số hoặc ký tự đặc biệt
+        if (!username.matches("^[\\p{L}\\s]+$")) {
+            JOptionPane.showMessageDialog(null, "Tên sinh viên không được chứa số hoặc ký tự đặc biệt.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
 
         // Kiểm tra password
-        if (password == null || password.length() < 2) {
-            throw new IllegalArgumentException("Mật khẩu phải có ít nhất 3 ký tự.");
+        if (password == null || password.length() < 3) {
+            JOptionPane.showMessageDialog(null, "Mật khẩu phải có ít nhất 3 ký tự.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
 
-        // Kiểm tra ngày sinh
-        if (!isValidDate(ngaySinhStr)) {
-            throw new IllegalArgumentException("Ngày sinh không hợp lệ. Định dạng hợp lệ: yyyy-MM-dd");
+        // Kiểm tra định dạng ngày sinh
+        LocalDate ngaySinh;
+        try {
+            ngaySinh = LocalDate.parse(ngaySinhStr);
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(null, "Ngày sinh không hợp lệ. Định dạng hợp lệ: yyyy-MM-dd", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+
+        // Kiểm tra ngày sinh không được trong tương lai
+        if (ngaySinh.isAfter(LocalDate.now())) {
+            JOptionPane.showMessageDialog(null, "Ngày sinh không được nằm trong tương lai.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
 
         // Kiểm tra lớp
         if (lop == null || lop.trim().isEmpty()) {
-            throw new IllegalArgumentException("Lớp không được để trống.");
+            JOptionPane.showMessageDialog(null, "Lớp không được để trống.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
 
-        // Tạo đối tượng Student hợp lệ
-        Student student = new Student(username,password,mssv,ngaySinhStr,lop);
-        return student;
+        // Nếu hợp lệ, tạo và trả về đối tượng Student
+        return new Student(username, password, mssv, ngaySinhStr, lop);
     }
+
+
 
     private static boolean isValidDate(String dateStr) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

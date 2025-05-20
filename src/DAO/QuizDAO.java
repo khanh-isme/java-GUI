@@ -4,6 +4,7 @@ import project.*;
 
 import javax.swing.*;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class QuizDAO {
@@ -164,23 +165,38 @@ public class QuizDAO {
     }
 
 
-    public static boolean quizExists(int quizId) {
-        String sql = "SELECT 1 FROM quiz WHERE quizId = ?";
+    public static Quiz getQuizByNameAndSubject(String quizName, String subjectName) {
+        String sql = "SELECT * FROM quizzes WHERE quizName = ? AND subjectName = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, quizId);
+            stmt.setString(1, quizName);
+            stmt.setString(2, subjectName);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next(); // Nếu có dòng kết quả => tồn tại
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int quizId = rs.getInt("quizId");
+                String name = rs.getString("quizName");
+                String subject = rs.getString("subjectName");
+                LocalDateTime dateCreated = rs.getTimestamp("dateCreated").toLocalDateTime();
+                int createdBy = rs.getInt("createdBy");
+                int thoiGianLamBai = rs.getInt("thoiGianLamBai");
+
+                String teacherName =TeacherDAO.getTeacherNameById(createdBy);
+                List<Question> questions = QuestionDAO.getQuestionsByQuizId(quizId); // Phải có DAO này
+
+                return new Quiz(quizId, name, teacherName, subject, dateCreated, questions, thoiGianLamBai);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false; // Gặp lỗi thì coi như không tồn tại
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
+        return null;
     }
+
+
 
 
 

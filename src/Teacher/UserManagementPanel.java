@@ -75,10 +75,22 @@ public class UserManagementPanel extends JPanel {
         deleteButton.addActionListener(e -> {
             int row = userTable.getSelectedRow();
             if (row >= 0) {
-                ssystem.getUsers().remove(row);
-                refreshTable();
+                User user = ssystem.getUsers().get(row);
+                int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "Bạn có chắc muốn xoá người dùng \"" + user.getUsername() + "\"?",
+                        "Xác nhận xoá",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    ssystem.getUsers().remove(row);
+                    refreshTable();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn một người dùng để xoá.");
             }
         });
+
 
         // Cập nhật bảng mỗi khi thay đổi tìm kiếm hoặc phân loại
         searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -249,11 +261,22 @@ public class UserManagementPanel extends JPanel {
         removeButton.addActionListener(e -> {
             Subject selected = subjectList.getSelectedValue();
             if (selected != null) {
-                RegisteredSubjectDAO.deleteRegistration(student.getMssv(),selected.getName());
-                student.getRegisteredSubjects().remove(selected);
-                listModel.removeElement(selected);
+                int confirm = JOptionPane.showConfirmDialog(
+                        subjectDialog,
+                        "Bạn có chắc muốn xoá môn \"" + selected.getName() + "\" khỏi danh sách đăng ký?",
+                        "Xác nhận xoá môn học",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    RegisteredSubjectDAO.deleteRegistration(student.getMssv(), selected.getName());
+                    student.getRegisteredSubjects().remove(selected);
+                    listModel.removeElement(selected);
+                }
+            } else {
+                JOptionPane.showMessageDialog(subjectDialog, "Vui lòng chọn một môn học để xoá.");
             }
         });
+
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
@@ -326,13 +349,25 @@ public class UserManagementPanel extends JPanel {
         deleteButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow >= 0) {
-
-                student.getQuizHistory().remove(selectedRow);
                 Result result = student.getQuizHistory().get(selectedRow);
-                ResultsDAO.deleteResult(result);
-                model.removeRow(selectedRow);
+                int confirm = JOptionPane.showConfirmDialog(
+                        resultDialog,
+                        "Bạn có chắc muốn xoá kết quả quiz ID " + result.getQuizId() +
+                                " (môn " + result.getSubjectName() + ") không?",
+                        "Xác nhận xoá kết quả",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    ResultsDAO.deleteResult(result);
+                    student.getQuizHistory().remove(selectedRow);
+                    model.removeRow(selectedRow);
+                }
+            } else {
+                JOptionPane.showMessageDialog(resultDialog, "Vui lòng chọn một kết quả để xoá.");
             }
         });
+
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
